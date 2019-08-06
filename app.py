@@ -21,16 +21,18 @@ class Social(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     image = db.Column(db.String(500))
-    description = db.Column(db.String(500))
+    short_description = db.Column(db.String(100))
+    long_description = db.Column(db.String(2000))
     
-    def __init__(self, name, image, description):
+    def __init__(self, name, image, short_description, long_description):
         self.name = name
         self.image = image
-        self.description = description
+        self.short_description = short_description
+        self.long_description = long_description
 
 class SocialSchema(ma.Schema):
     class Meta:
-        fields = ("id", "name", "image", "description")
+        fields = ("id", "name", "image", "short_description", "long_description")
 
 social_schema = SocialSchema()
 socials_schema = SocialSchema(many=True)
@@ -54,9 +56,10 @@ def get_social(id):
 def add_social():
     name = request.json["name"]
     image = request.json["image"]
-    description = request.json["description"]
+    short_description = request.json["short_description"]
+    long_description = request.json["long_description"]
 
-    new_social = Social(name, image, description)
+    new_social = Social(name, image, short_description, long_description)
 
     db.session.add(new_social)
     db.session.commit()
@@ -69,10 +72,13 @@ def update_social(id):
 
     name = request.json["name"]
     image = request.json["image"]
-    description = request.json["description"]
+    short_description = request.json["short_description"]
+    long_description = request.json["long_description"]
+
 
     social.name = name
-    social.description = description 
+    social.short_description = short_description 
+    social.long_description = long_description
     
     db.session.commit()
     return social_schema.jsonify(social)
